@@ -43,6 +43,7 @@ export class TodolistController {
     @Body()
     todoData: CreateTodolistDto,
   ): Promise<Todolist> {
+    console.log(todoData);
     return this.todolistService.create(todoData);
   }
 
@@ -59,7 +60,6 @@ export class TodolistController {
         return updatedTodo;
       }
     } catch (error) {
-      // ทำสิ่งที่คุณต้องการเมื่อเกิดข้อผิดพลาด
       console.error('An error occurred:', error.message);
       throw new Error('Failed to update todo');
     }

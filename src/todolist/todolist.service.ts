@@ -74,12 +74,14 @@ export class TodolistService {
         type,
         image,
         status,
+        // updatedat: new Date(),
         deletestatus,
       };
 
       const updatedTodo = await this.todoModel.findByIdAndUpdate(
         id,
         updateData,
+        { new: true },
       );
 
       if (!updatedTodo) {

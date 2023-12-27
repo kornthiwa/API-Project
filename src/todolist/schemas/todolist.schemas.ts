@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-export type CatDocument = HydratedDocument<Todolist>;
+export type TodolistDocument = HydratedDocument<Todolist>;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Todolist {
   @Prop({ type: Boolean, required: true })
   active!: boolean;
@@ -10,10 +10,10 @@ export class Todolist {
   @Prop({ type: String, required: true })
   todo!: string;
 
-  @Prop({ type: Date, default: Date.now, required: false })
+  @Prop({ type: Date, default: new Date(), required: false })
   createdat?: Date;
 
-  @Prop({ type: String, default: Date.now, required: false })
+  @Prop({ type: Date, default: new Date(), required: false })
   updatedat?: Date;
 
   @Prop({ type: Number, required: false })
