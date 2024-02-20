@@ -12,15 +12,13 @@ import { TodolistService } from './todolist.service';
 import { CreateTodolistDto } from './dto/create-todolist.dto';
 import { Todolist } from './schemas/todolist.schemas';
 import { UpdateTodolistDto } from './dto/update-todolist.dto';
-
+interface FindAllResult {
+  todos: Todolist[];
+  testcount?: number;
+}
 @Controller('todolist')
 export class TodolistController {
   constructor(private todolistService: TodolistService) {}
-
-  // @Get()
-  // async getAlltodolist(): Promise<Todolist[]> {
-  //   return this.todolistService.findAll();
-  // }
 
   @Get(':id')
   async getByIdtodolist(@Param('id') id: string): Promise<Todolist> {
@@ -28,13 +26,15 @@ export class TodolistController {
   }
 
   @Get()
-  async getTodolist(@Query('todo') todoName?: string): Promise<Todolist[]> {
-    console.log(todoName);
+  async getTodolist(
+    @Query('todo') todoName?: string,
+  ): Promise<Todolist[] | FindAllResult> {
     if (todoName) {
       const todos = await this.todolistService.findByCondition(todoName);
       return todos;
     } else {
-      return this.todolistService.findAll();
+      const result = await this.todolistService.findAll();
+      return { testcount: result.testcount, todos: result.todos };
     }
   }
 
@@ -66,7 +66,16 @@ export class TodolistController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return `Hello World! ${id}`;
+  async delete(@Param('id') id: string) {
+    try {
+      console.log(id);
+
+      if (id) {
+        const deleteTodo = await this.todolistService.sorfdelete(id);
+        return deleteTodo;
+      }
+    } catch (error) {
+      console.error('An error occurred:', error.message);
+    }
   }
 }

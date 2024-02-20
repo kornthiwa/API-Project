@@ -5,16 +5,10 @@ export type TodolistDocument = HydratedDocument<Todolist>;
 @Schema({ timestamps: true })
 export class Todolist {
   @Prop({ type: Boolean, required: true })
-  active!: boolean;
+  active: boolean;
 
   @Prop({ type: String, required: true })
-  todo!: string;
-
-  @Prop({ type: Date, default: new Date(), required: false })
-  createdat?: Date;
-
-  @Prop({ type: Date, default: new Date(), required: false })
-  updatedat?: Date;
+  todo: string;
 
   @Prop({ type: Number, required: false })
   priority?: number;
@@ -31,13 +25,13 @@ export class Todolist {
     },
     required: false,
   })
-  image: {
+  image?: {
     image: string;
     name: string;
   };
 
   @Prop({ type: Number, required: false })
-  status?: number;
+  status: number;
 
   @Prop({ type: Boolean, default: false, required: false })
   deletestatus?: boolean;

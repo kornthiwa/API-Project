@@ -6,10 +6,10 @@ export class UpdateTodolistDto extends PartialType(CreateTodolistDto) {
   readonly todo: string;
   readonly priority?: number;
   readonly type?: string;
-  readonly image: {
+  readonly image?: {
     image: string;
     name: string;
   };
-  readonly status?: number;
-  readonly deletestatus?: boolean;
+  readonly status: number;
+  readonly deletestatus: boolean;
 }

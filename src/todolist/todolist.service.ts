@@ -3,6 +3,10 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Todolist } from './schemas/todolist.schemas';
 import mongoose from 'mongoose';
 
+interface FindAllResult {
+  todos: Todolist[];
+  testcount: number;
+}
 @Injectable()
 export class TodolistService {
   constructor(
@@ -10,10 +14,17 @@ export class TodolistService {
     private todoModel: mongoose.Model<Todolist>,
   ) {}
 
-  async findAll(): Promise<Todolist[]> {
+  async findAll(): Promise<FindAllResult> {
     try {
-      const todos = await this.todoModel.find();
-      return todos;
+      const todos = await this.todoModel.find({
+        deletestatus: false,
+      });
+
+      const testcount = await this.todoModel.countDocuments({
+        deletestatus: false,
+      });
+      console.log('Test Count:', testcount);
+      return { todos, testcount };
     } catch (error) {
       console.error('An error occurred:', error.message);
       throw new Error('Failed to fetch todos');
@@ -74,7 +85,6 @@ export class TodolistService {
         type,
         image,
         status,
-        // updatedat: new Date(),
         deletestatus,
       };
 
@@ -90,7 +100,25 @@ export class TodolistService {
       console.log(updateData);
       return updatedTodo;
     } catch (error) {
-      // ทำสิ่งที่คุณต้องการเมื่อเกิดข้อผิดพลาด
+      console.error('An error occurred:', error.message);
+      throw new Error('Failed to update todo');
+    }
+  }
+
+  async sorfdelete(id: string): Promise<Todolist> {
+    console.log(id);
+
+    try {
+      const todo = await this.todoModel.findById(id);
+
+      if (!todo) {
+        throw new Error(`Todo with id ${id} not found`);
+      }
+
+      await this.todoModel.updateOne({ _id: todo._id }, { deletestatus: true });
+
+      return todo;
+    } catch (error) {
       console.error('An error occurred:', error.message);
       throw new Error('Failed to update todo');
     }
