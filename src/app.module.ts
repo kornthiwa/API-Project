@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { TodolistModule } from './todolist/todolist.module';
 import { MongodbModule } from './mongodb/mongodb.module';
+import { PatientModule } from './patient/patient.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { MongodbModule } from './mongodb/mongodb.module';
     }),
     MongodbModule,
     TodolistModule,
+    PatientModule,
   ],
   controllers: [AppController],
   providers: [AppService],
