@@ -7,44 +7,66 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { LoginService } from './login.service';
-import { CreateLoginDto } from './dto/create-login.dto';
+import { CreateLoginDto, LoginDto } from './dto/create-login.dto';
+import { AuthService } from './auth.service';
 
 @Controller('login')
 export class LoginController {
-  constructor(private readonly loginService: LoginService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly loginService: LoginService,
+  ) {}
 
-  @Post()
-  async create(@Body() createLoginDto: CreateLoginDto) {
-    console.log(createLoginDto);
+  @Post('login')
+  async login(@Body() loginDto: LoginDto) {
     try {
-      let login;
-      // Check if the username already exists
-      const existingLogin = await this.loginService.findByUsername(
-        createLoginDto.username,
+      const login = await this.loginService.login(
+        loginDto.username,
+        loginDto.password,
       );
-
-      if (existingLogin) {
-        // If the username exists, attempt to login and check the password
-        login = await this.loginService.login(
-          createLoginDto.username,
-          createLoginDto.password,
+      if (!login) {
+        throw new HttpException(
+          { message: 'Invalid username or password' },
+          HttpStatus.UNAUTHORIZED,
         );
-        if (!login) {
-          throw new HttpException(
-            { message: 'Incorrect password' },
-            HttpStatus.UNAUTHORIZED,
-          );
-        }
-      } else {
-        // If the username doesn't exist, create a new login
-        login = await this.loginService.create(createLoginDto);
       }
 
-      return login;
+      const token = await this.authService.generateToken(login); // Generate token for logged-in user
+      return { login, token }; // Return both login object and token
     } catch (error) {
       console.error(error);
       throw new HttpException(
-        { message: 'Failed to create or login' },
+        { message: 'Failed to login' },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @Post('register') // Dedicated endpoint for registration
+  async register(@Body() createLoginDto: CreateLoginDto) {
+    try {
+      const existingLogin = await this.loginService.findByUsername(
+        createLoginDto.username,
+      );
+      if (existingLogin) {
+        throw new HttpException(
+          { message: 'Username already exists' },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      // Create new login using loginService.create
+      const login = await this.loginService.create(createLoginDto);
+
+      // Generate token for the newly created user
+      const token = await this.authService.generateToken(login);
+
+      // Return both login object and token
+      return { login, token };
+    } catch (error) {
+      console.error(error);
+      throw new HttpException(
+        { message: 'Failed to create account' },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

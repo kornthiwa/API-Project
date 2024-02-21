@@ -25,11 +25,11 @@ export class LoginService {
   ): Promise<LoginDocument | null> {
     const login = await this.loginModel.findOne({ username });
     if (!login) {
-      return null; // Username not found
+      return null;
     }
 
     const isMatch = await bcrypt.compare(password, login.password);
-    return isMatch ? login : null; // Return login document if password matches
+    return isMatch ? login : null;
   }
 
   findAll(): Promise<LoginDocument[]> {
