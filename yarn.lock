@@ -5239,7 +5239,7 @@ typedarray@^0.0.6:
 
 typegoose@^5.9.1:
   version "5.9.1"
-  resolved "https://registry.npmjs.org/typegoose/-/typegoose-5.9.1.tgz"
+  resolved "https://registry.yarnpkg.com/typegoose/-/typegoose-5.9.1.tgz#58dbb14f35ecf96b22e7c744fa7a0f9731260f29"
   integrity sha512-D+vMhNyZeKBZHrmJFZwOodl3T9W2NOXY+hbnW/f1n60oEL8+L15eryFc9C6fAKrlnkgpui+kdQnNXsLwx2MgCw==
   dependencies:
     reflect-metadata "^0.1.13"
